@@ -1,0 +1,55 @@
+(() => {
+  class SectionDivider extends HTMLElement {
+    connectedCallback() {
+      if (this.childElementCount) return;
+
+      const image = document.createElement('img');
+      image.src = 'assets/separador-vaquero-marcela.png';
+      image.alt = '';
+      image.setAttribute('aria-hidden', 'true');
+      image.draggable = false;
+      image.width = 2172;
+      image.height = 724;
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      this.append(image);
+    }
+  }
+
+  if (!customElements.get('section-divider')) {
+    customElements.define('section-divider', SectionDivider);
+  }
+
+  const cover = document.getElementById('portada');
+  const content = document.getElementById('contenido-invitacion');
+  if (!cover || !content) return;
+  const createDivider = () => {
+    const divider = document.createElement('section-divider');
+    divider.classList.add('section-divider');
+    return divider;
+  };
+
+  const reconcile = () => {
+    const sections = [cover, ...Array.from(content.children)
+      .filter((element) => element.classList.contains('invitation-section'))];
+
+    sections.forEach((section, index) => {
+      section.style.setProperty('--section-stack', String(sections.length - index));
+      const dividers = Array.from(section.children).filter((child) => child.localName === 'section-divider');
+
+      if (index < sections.length - 1) {
+        if (dividers.length === 0) section.append(createDivider());
+        dividers.slice(1).forEach((divider) => divider.remove());
+      } else {
+        dividers.forEach((divider) => divider.remove());
+      }
+    });
+  };
+
+  reconcile();
+
+  if ('MutationObserver' in window) {
+    const sectionsObserver = new MutationObserver(reconcile);
+    sectionsObserver.observe(content, { childList: true });
+  }
+})();

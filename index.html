@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es" class="is-locked">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#26101c">
+    <meta name="description" content="Acompáñanos a celebrar los 98 años de Marcela Pérez Soto.">
+    <title>Marcela Pérez Soto · 98 años</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600&family=Rye&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="separadores.js" defer></script>
+    <script src="apertura.js" defer></script>
+    <script src="cuenta-regresiva.js" defer></script>
+    <script src="section-backdrop.js" defer></script>
+  </head>
+  <body class="is-locked">
+    <div class="desktop-backdrop" id="desktopBackdrop" aria-hidden="true">
+      <img alt="">
+      <img alt="">
+    </div>
+    <main class="invitation-shell">
+      <section class="cover" id="portada" aria-labelledby="cover-title">
+        <img class="cover__image" src="assets/portada-marcela.png" width="941" height="1672" fetchpriority="high" alt="Marcela, rodeada de flores rosas y detalles vaqueros, sostiene una rosa blanca">
+        <div class="cover__shade" aria-hidden="true"></div>
+        <div class="lamp-layer lamp-layer--cover" aria-hidden="true">
+          <span class="lamp-glow lamp-glow--cover-upper"></span>
+          <span class="lamp-glow lamp-glow--cover-middle"></span>
+          <span class="lamp-glow lamp-glow--cover-side"></span>
+          <span class="lamp-glow lamp-glow--cover-lower"></span>
+        </div>
+
+        <div class="cover__copy">
+          <p class="cover__eyebrow">Acompáñanos a celebrar</p>
+          <span class="cover__ornament" aria-hidden="true"><i></i><b>✦</b><i></i></span>
+          <h1 id="cover-title">Marcela<br><span>Pérez Soto</span></h1>
+        </div>
+
+        <button class="cover__open" id="openInvitation" type="button" aria-label="Abrir la invitación">
+          <img src="assets/abrir-invitacion.png" width="2076" height="757" alt="" draggable="false">
+        </button>
+      </section>
+
+    <div id="contenido-invitacion" aria-hidden="true" inert>
+        <section class="invitation-section" id="presentacion" aria-label="Bienvenida" tabindex="-1">
+          <img
+            class="invitation-image"
+            src="assets/bienvenida-marcela.png"
+            width="941"
+            height="1672"
+            alt="98 años de una vida maravillosa. Con mucha alegría queremos compartir contigo un momento muy especial: la celebración de los 98 años de Marcela Pérez Soto. Una vida llena de historias, recuerdos y personas que han formado parte de su camino."
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="lamp-layer" aria-hidden="true">
+            <span class="lamp-glow lamp-glow--welcome-left"></span>
+            <span class="lamp-glow lamp-glow--welcome-bulb-1"></span>
+            <span class="lamp-glow lamp-glow--welcome-bulb-2"></span>
+            <span class="lamp-glow lamp-glow--welcome-bulb-3"></span>
+            <span class="lamp-glow lamp-glow--welcome-bulb-4"></span>
+            <span class="lamp-glow lamp-glow--welcome-bulb-5"></span>
+          </div>
+        </section>
+        <section class="invitation-section countdown-section" aria-label="Cuenta regresiva: Cada vez falta menos. Faltan... Cada día nos acerca a un momento muy especial.">
+          <img
+            class="invitation-image countdown__background"
+            src="assets/cuenta-regresiva-marcela.png"
+            width="1086"
+            height="1448"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="lamp-layer" aria-hidden="true">
+            <span class="lamp-glow lamp-glow--countdown-left"></span>
+            <span class="lamp-glow lamp-glow--countdown-upper-right"></span>
+            <span class="lamp-glow lamp-glow--countdown-lower-right"></span>
+          </div>
+          <div class="countdown__placement">
+            <div class="countdown__grid" id="countdownTimer" role="timer" aria-label="Cuenta regresiva al 5 de diciembre de 2026 a las 3:30 p. m., hora de Ciudad de México" aria-live="off">
+              <div class="countdown__unit" role="group" aria-label="Días">
+                <img class="countdown__frames" src="assets/contador-dias-marcela.png" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <span class="countdown__value" id="countdownDays" aria-label="Días restantes">--</span>
+              </div>
+              <div class="countdown__unit" role="group" aria-label="Horas">
+                <img class="countdown__frames" src="assets/contador-horas-marcela.png" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <span class="countdown__value" id="countdownHours" aria-label="Horas restantes">--</span>
+              </div>
+              <div class="countdown__unit" role="group" aria-label="Minutos">
+                <img class="countdown__frames" src="assets/contador-minutos-marcela.png" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <span class="countdown__value" id="countdownMinutes" aria-label="Minutos restantes">--</span>
+              </div>
+              <div class="countdown__unit" role="group" aria-label="Segundos">
+                <img class="countdown__frames" src="assets/contador-segundos-marcela.png" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <span class="countdown__value" id="countdownSeconds" aria-label="Segundos restantes">--</span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="invitation-section location-section" id="ubicacion" aria-labelledby="locationTitle">
+          <img
+            class="invitation-image location__background"
+            src="assets/ubicacion-marcela.png"
+            width="941"
+            height="1672"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="lamp-layer" aria-hidden="true">
+            <span class="lamp-glow lamp-glow--location-left"></span>
+            <span class="lamp-glow lamp-glow--location-right"></span>
+          </div>
+          <div class="location__content">
+            <header class="location__heading" data-location-reveal>
+              <img
+                class="location__heading-art"
+                id="locationTitle"
+                src="assets/ubicacion-encabezado-marcela.png"
+                width="1448"
+                height="1086"
+                alt="Ubicación. Te esperamos para celebrar juntos este momento tan especial"
+                loading="lazy"
+                decoding="async"
+              >
+            </header>
+
+            <div class="location__tabs" role="tablist" aria-label="Tipo de evento" data-location-reveal>
+              <button class="location__tab is-active" id="locationTabCeremony" type="button" role="tab" aria-selected="true" aria-controls="locationPanel" tabindex="0">Ceremonia</button>
+              <button class="location__tab" id="locationTabReception" type="button" role="tab" aria-selected="false" aria-controls="locationPanel" tabindex="-1">Recepción</button>
+            </div>
+
+            <div class="location__panel" id="locationPanel" role="tabpanel" aria-labelledby="locationTabCeremony" data-location-reveal>
+              <div class="location__panel-content">
+                <div class="location__details">
+                  <p class="location__name" id="eventLocationName">Lugar por confirmar</p>
+                  <p class="location__time" id="eventTime">3:30 P. M.</p>
+                  <div class="sr-only" aria-live="off">
+                    <span id="eventAddress" hidden></span>
+                  </div>
+                </div>
+                <div class="location__map-window">
+                  <div class="location__map" id="locationMap" role="region" aria-label="Mapa del evento" tabindex="-1">
+                  </div>
+                </div>
+              </div>
+              <img
+                class="location__panel-art"
+                src="assets/ubicacion-marco-mapa-marcela.png"
+                width="1448"
+                height="1086"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+              >
+            </div>
+
+            <div class="location__actions" data-location-reveal>
+              <button class="location__button" id="directionsButton" type="button" aria-label="Abrir en Maps" disabled>
+                <img src="assets/ubicacion-boton-maps-marcela.png" width="2172" height="724" alt="" draggable="false" loading="lazy" decoding="async">
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="invitation-section" id="codigo-vestimenta" aria-label="Código de vestimenta">
+          <img
+            class="invitation-image"
+            src="assets/codigo-vestimenta-marcela.png"
+            width="1024"
+            height="1536"
+            alt="Código de Vestimenta: estilo vaquero, opciones para mujer y hombre."
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="lamp-layer" aria-hidden="true">
+            <span class="lamp-glow lamp-glow--dress-left"></span>
+            <span class="lamp-glow lamp-glow--dress-right"></span>
+            <span class="lamp-glow lamp-glow--dress-floor"></span>
+          </div>
+        </section>
+        <section class="invitation-section rsvp-section" id="confirmacion" aria-label="Confirmación de asistencia">
+          <img
+            class="invitation-image rsvp__background"
+            src="assets/confirmacion-base-marcela.png"
+            width="1448"
+            height="956"
+            alt="¿Nos acompañas? Tu presencia hace este día aún más especial."
+            loading="lazy"
+            decoding="async"
+          >
+          <div class="lamp-layer" aria-hidden="true">
+            <span class="lamp-glow lamp-glow--rsvp-left"></span>
+            <span class="lamp-glow lamp-glow--rsvp-right"></span>
+          </div>
+          <a
+            class="rsvp__button-link"
+            href="https://wa.me/527751344548?text=Hola%2C%20confirmo%20mi%20asistencia%20al%20cumplea%C3%B1os%20de%20Marcela%20P%C3%A9rez%20Soto"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Confirmar asistencia por WhatsApp"
+          >
+            <img
+              class="invitation-image rsvp__button-image"
+              src="assets/confirmacion-boton-marcela.png"
+              width="2172"
+              height="724"
+              alt=""
+              draggable="false"
+              loading="lazy"
+              decoding="async"
+            >
+          </a>
+        </section>
+      </div>
+    </main>
+    <audio id="invitationMusic" src="assets/el-muchacho-alegre.mp3" preload="none" loop></audio>
+    <button
+      class="music-control"
+      id="musicControl"
+      type="button"
+      aria-label="Reproducir música"
+      aria-pressed="false"
+    >
+      <img src="assets/icono-musica-marcela.png" width="1280" height="1280" alt="" draggable="false">
+    </button>
+    <script src="ubicacion.js" defer></script>
+  </body>
+</html>
