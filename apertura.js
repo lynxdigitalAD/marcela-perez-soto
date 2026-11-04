@@ -10,8 +10,25 @@
   const invitationImages = invitationContent.querySelectorAll('.invitation-image');
   const lazyInvitationImages = document.querySelectorAll('.section-divider img[loading="lazy"], #contenido-invitacion img[loading="lazy"]');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const isPageReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+  const navigationType = performance.getEntriesByType('navigation')[0]?.type;
+  const isPageReload = navigationType === 'reload';
+  const isBackForwardNavigation = navigationType === 'back_forward';
+  const pageStateStorageKey = 'marcela-invitation-page-state-v1';
+  const readPageState = () => {
+    try {
+      const state = JSON.parse(sessionStorage.getItem(pageStateStorageKey));
+      return state?.open === true && Number.isFinite(state.scrollY) ? state : null;
+    } catch {
+      return null;
+    }
+  };
+  const savedHistoryState = isBackForwardNavigation ? readPageState() : null;
+  if (!isBackForwardNavigation) {
+    try { sessionStorage.removeItem(pageStateStorageKey); } catch {}
+  }
   let musicHasStarted = false;
+  let cancelOpeningScroll = () => {};
+  let recoveryFrame = 0;
 
   const setMusicPlaying = (isPlaying) => {
     musicControl.classList.toggle('is-playing', isPlaying);
@@ -65,6 +82,13 @@
   };
 
   const isLocked = () => root.classList.contains('is-locked');
+
+  const savePageState = () => {
+    if (isLocked()) return;
+    try {
+      sessionStorage.setItem(pageStateStorageKey, JSON.stringify({ open: true, scrollY: window.scrollY }));
+    } catch {}
+  };
 
   if (isPageReload) {
     // A main-page reload always starts at the locked cover, including after returning from the album.
@@ -122,10 +146,13 @@
     const completeAnimation = () => {
       if (!isAnimating) return;
       isAnimating = false;
+      cancelOpeningScroll = () => {};
       if (animationFrame) cancelAnimationFrame(animationFrame);
       removeScrollIntentListeners();
       finishOpening();
     };
+
+    cancelOpeningScroll = completeAnimation;
 
     const interruptForUserScroll = () => completeAnimation();
     const interruptForScrollKey = (event) => {
@@ -196,6 +223,58 @@
     window.scrollTo(0, restoreY);
   };
 
+  const restoreOpenPage = (requestedY = window.scrollY) => {
+    if (isLocked()) return;
+    if (root.classList.contains('is-opening')) cancelOpeningScroll();
+    openButton.disabled = true;
+    finishOpening();
+    unlockPageScroll();
+    invitationContent.inert = false;
+    invitationContent.removeAttribute('aria-hidden');
+    observeInvitationMedia();
+
+    if (recoveryFrame) cancelAnimationFrame(recoveryFrame);
+    recoveryFrame = requestAnimationFrame(() => {
+      recoveryFrame = 0;
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const scrollY = Math.min(Math.max(0, Number.isFinite(requestedY) ? requestedY : window.scrollY), maxScroll);
+      window.scrollTo(0, scrollY);
+
+      // Reveal artwork near the restored viewport immediately; leave distant sections lazy.
+      const preloadDistance = 900;
+      invitationImages.forEach((image) => {
+        const bounds = image.getBoundingClientRect();
+        if (bounds.bottom >= -preloadDistance && bounds.top <= window.innerHeight + preloadDistance) {
+          image.classList.add('is-visible');
+        }
+      });
+    });
+  };
+
+  const resumeVisiblePage = () => {
+    root.classList.remove('is-page-backgrounded');
+    if (isLocked()) return;
+    const savedState = readPageState();
+    restoreOpenPage(savedState?.open ? savedState.scrollY : window.scrollY);
+  };
+
+  const backgroundPage = () => {
+    root.classList.add('is-page-backgrounded');
+    if (!isLocked()) savePageState();
+    if (root.classList.contains('is-opening')) cancelOpeningScroll();
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) backgroundPage();
+    else resumeVisiblePage();
+  });
+  window.addEventListener('pagehide', backgroundPage);
+  window.addEventListener('pageshow', (event) => {
+    root.classList.remove('is-page-backgrounded');
+    if (isLocked()) return;
+    if (event.persisted || isBackForwardNavigation) resumeVisiblePage();
+  });
+
   document.addEventListener('wheel', preventScroll, { passive: false });
   document.addEventListener('touchmove', preventScroll, { passive: false });
   document.addEventListener('dragstart', preventScroll);
@@ -248,5 +327,7 @@
       memories.scrollIntoView({ block: 'start' });
       memories.focus({ preventScroll: true });
     });
+  } else if (isBackForwardNavigation && savedHistoryState?.open) {
+    restoreOpenPage(savedHistoryState.scrollY);
   }
 })();

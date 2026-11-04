@@ -39,4 +39,10 @@
 
   updateCountdown();
   if (Date.now() < targetTime) timer = window.setInterval(updateCountdown, 1000);
+
+  const refreshCountdownWhenVisible = () => {
+    if (!document.hidden) updateCountdown();
+  };
+  document.addEventListener('visibilitychange', refreshCountdownWhenVisible);
+  window.addEventListener('pageshow', refreshCountdownWhenVisible);
 })();

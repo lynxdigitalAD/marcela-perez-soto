@@ -104,6 +104,12 @@ body.is-open {
   -webkit-overflow-scrolling: touch;
 }
 
+html.is-page-backgrounded *,
+html.is-page-backgrounded *::before,
+html.is-page-backgrounded *::after {
+  animation-play-state: paused !important;
+}
+
 main.invitation-shell {
   position: relative;
   width: var(--invitation-width);
