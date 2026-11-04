@@ -133,7 +133,14 @@
   const scrollToPresentation = () => {
     const startY = window.scrollY;
     const targetY = Math.max(0, Math.round(startY + nextSection.getBoundingClientRect().top));
-    const duration = reduceMotion.matches ? 0 : (isSmallScreen ? 320 : 780);
+    if (isSmallScreen) {
+      // Avoid consuming the first mobile swipe with an opening animation.
+      window.scrollTo(0, targetY);
+      finishOpening();
+      return;
+    }
+
+    const duration = reduceMotion.matches ? 0 : 780;
 
     if (duration === 0 || Math.abs(targetY - startY) < 1) {
       window.scrollTo(0, targetY);
