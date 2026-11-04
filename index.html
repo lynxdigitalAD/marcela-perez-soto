@@ -6,13 +6,15 @@
     <meta name="theme-color" content="#26101c">
     <meta name="description" content="Acompáñanos a celebrar los 98 años de Marcela Pérez Soto.">
     <title>Marcela Pérez Soto · 98 años</title>
+    <link rel="preload" as="image" href="assets/portada-marcela-blur.webp" type="image/webp" fetchpriority="high">
+    <link rel="preload" as="image" href="assets/portada-marcela-fast.webp" type="image/webp" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600&family=Rye&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20261104-mobile-resume">
+    <link rel="stylesheet" href="styles.css?v=20261104-mobile-open">
     <link rel="stylesheet" href="recuerdos-marcela.css">
     <script src="separadores.js?v=20261104-image-load" defer></script>
-    <script src="apertura.js?v=20261104-mobile-resume" defer></script>
+    <script src="apertura.js?v=20261104-mobile-open" defer></script>
     <script src="cuenta-regresiva.js?v=20261104-mobile-resume" defer></script>
     <script src="section-backdrop.js?v=20261104-picture-sources" defer></script>
   </head>
@@ -23,9 +25,9 @@
     </div>
     <main class="invitation-shell">
       <section class="cover" id="portada" aria-labelledby="cover-title">
-        <picture class="invitation-artwork cover__artwork">
-          <source srcset="assets/portada-marcela.webp" type="image/webp">
-          <img class="cover__image" src="assets/portada-marcela.png" width="941" height="1672" fetchpriority="high" alt="Marcela, rodeada de flores rosas y detalles vaqueros, sostiene una rosa blanca">
+        <picture class="invitation-artwork cover__artwork" role="img" aria-label="Marcela, rodeada de flores rosas y detalles vaqueros, sostiene una rosa blanca">
+          <source srcset="assets/portada-marcela-fast.webp" type="image/webp">
+          <img class="cover__image" src="assets/portada-marcela.png" width="941" height="1672" loading="eager" decoding="async" fetchpriority="high" alt="">
         </picture>
         <div class="cover__shade" aria-hidden="true"></div>
         <div class="lamp-layer lamp-layer--cover" aria-hidden="true">

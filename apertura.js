@@ -2,6 +2,7 @@
   const root = document.documentElement;
   const body = document.body;
   const cover = document.getElementById('portada');
+  const coverImage = cover.querySelector('.cover__image');
   const openButton = document.getElementById('openInvitation');
   const invitationContent = document.getElementById('contenido-invitacion');
   const nextSection = document.getElementById('presentacion');
@@ -10,6 +11,7 @@
   const invitationImages = invitationContent.querySelectorAll('.invitation-image');
   const lazyInvitationImages = document.querySelectorAll('.section-divider img[loading="lazy"], #contenido-invitacion img[loading="lazy"]');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const isSmallScreen = window.matchMedia('(max-width: 699px)').matches;
   const navigationType = performance.getEntriesByType('navigation')[0]?.type;
   const isPageReload = navigationType === 'reload';
   const isBackForwardNavigation = navigationType === 'back_forward';
@@ -29,6 +31,13 @@
   let musicHasStarted = false;
   let cancelOpeningScroll = () => {};
   let recoveryFrame = 0;
+
+  const revealCoverImage = () => cover.classList.remove('cover--loading');
+  if (coverImage.complete && coverImage.naturalWidth > 0) revealCoverImage();
+  else {
+    cover.classList.add('cover--loading');
+    coverImage.addEventListener('load', revealCoverImage, { once: true });
+  }
 
   const setMusicPlaying = (isPlaying) => {
     musicControl.classList.toggle('is-playing', isPlaying);
@@ -62,7 +71,7 @@
         if ('fetchPriority' in image) image.fetchPriority = 'low';
         observer.unobserve(image);
       }
-    }, { rootMargin: '1800px 0px', threshold: 0 })
+    }, { rootMargin: isSmallScreen ? '700px 0px' : '1800px 0px', threshold: 0 })
     : null;
 
   const revealObserver = 'IntersectionObserver' in window
@@ -124,7 +133,7 @@
   const scrollToPresentation = () => {
     const startY = window.scrollY;
     const targetY = Math.max(0, Math.round(startY + nextSection.getBoundingClientRect().top));
-    const duration = reduceMotion.matches ? 0 : 780;
+    const duration = reduceMotion.matches ? 0 : (isSmallScreen ? 320 : 780);
 
     if (duration === 0 || Math.abs(targetY - startY) < 1) {
       window.scrollTo(0, targetY);
