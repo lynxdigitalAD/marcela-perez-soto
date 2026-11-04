@@ -380,6 +380,11 @@ html.is-open .cover > .section-divider {
   animation: lantern-warmth var(--lamp-duration, 4.2s) ease-in-out var(--lamp-delay, 0s) infinite;
 }
 
+.cover:not(.is-motion-active) .lamp-glow,
+.invitation-section:not(.is-motion-active) .lamp-glow {
+  animation-play-state: paused;
+}
+
 /* Main lanterns on the cover. */
 .lamp-glow--cover-upper { --lamp-left: 92.5%; --lamp-top: 13%; --lamp-width: 13%; --lamp-height: 12%; --lamp-delay: .2s; }
 .lamp-glow--cover-middle { --lamp-left: 81%; --lamp-top: 23%; --lamp-width: 11%; --lamp-height: 10%; --lamp-delay: 1.1s; --lamp-duration: 4.8s; }
@@ -668,6 +673,7 @@ html.is-open .cover > .section-divider {
   bottom: 17%;
   left: 9%;
   overflow: hidden;
+  touch-action: none;
 }
 
 .location__map {

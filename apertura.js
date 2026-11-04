@@ -15,6 +15,16 @@
   const navigationType = performance.getEntriesByType('navigation')[0]?.type;
   const isPageReload = navigationType === 'reload';
   const isBackForwardNavigation = navigationType === 'back_forward';
+  const motionSections = [cover, ...invitationContent.querySelectorAll('.invitation-section')];
+  const motionObserver = 'IntersectionObserver' in window
+    ? new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        entry.target.classList.toggle('is-motion-active', entry.isIntersecting);
+      }
+    }, { rootMargin: '200px 0px', threshold: 0 })
+    : null;
+  if (motionObserver) motionSections.forEach((section) => motionObserver.observe(section));
+  else motionSections.forEach((section) => section.classList.add('is-motion-active'));
   const pageStateStorageKey = 'marcela-invitation-page-state-v1';
   const readPageState = () => {
     try {
@@ -37,6 +47,27 @@
   else {
     cover.classList.add('cover--loading');
     coverImage.addEventListener('load', revealCoverImage, { once: true });
+  }
+
+  let invitationHasOpened = false;
+  const firstSectionImage = nextSection.querySelector('img.invitation-image');
+  const prefetchFirstSection = () => {
+    if (!firstSectionImage || invitationHasOpened || firstSectionImage.complete) return;
+    firstSectionImage.loading = 'eager';
+    if ('fetchPriority' in firstSectionImage) firstSectionImage.fetchPriority = 'low';
+  };
+  const scheduleFirstSectionPrefetch = () => {
+    if (typeof window.requestIdleCallback === 'function') {
+      window.requestIdleCallback(prefetchFirstSection, { timeout: 1600 });
+    } else {
+      window.setTimeout(prefetchFirstSection, 650);
+    }
+  };
+  const restoresOpenInvitation = window.location.hash === '#comparte-tus-momentos'
+    || (isBackForwardNavigation && savedHistoryState?.open);
+  if (!restoresOpenInvitation) {
+    if (coverImage.complete && coverImage.naturalWidth > 0) scheduleFirstSectionPrefetch();
+    else coverImage.addEventListener('load', scheduleFirstSectionPrefetch, { once: true });
   }
 
   const setMusicPlaying = (isPlaying) => {
@@ -68,10 +99,26 @@
         if (!entry.isIntersecting) continue;
         const image = entry.target;
         image.loading = 'eager';
-        if ('fetchPriority' in image) image.fetchPriority = 'low';
+        if ('fetchPriority' in image) {
+          const bounds = image.getBoundingClientRect();
+          const distance = Math.max(0, bounds.top - window.innerHeight, -bounds.bottom);
+          image.fetchPriority = distance <= 350 ? 'high' : 'low';
+        }
         observer.unobserve(image);
       }
-    }, { rootMargin: isSmallScreen ? '700px 0px' : '1800px 0px', threshold: 0 })
+    }, { rootMargin: isSmallScreen ? '1400px 0px' : '1800px 0px', threshold: 0 })
+    : null;
+
+  const priorityObserver = 'IntersectionObserver' in window
+    ? new IntersectionObserver((entries, observer) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const image = entry.target;
+        image.loading = 'eager';
+        if ('fetchPriority' in image) image.fetchPriority = 'high';
+        observer.unobserve(image);
+      }
+    }, { rootMargin: '350px 0px', threshold: 0 })
     : null;
 
   const revealObserver = 'IntersectionObserver' in window
@@ -86,6 +133,7 @@
 
   const observeInvitationMedia = () => {
     if (preloadObserver) lazyInvitationImages.forEach((image) => preloadObserver.observe(image));
+    if (priorityObserver) lazyInvitationImages.forEach((image) => priorityObserver.observe(image));
     if (revealObserver) invitationImages.forEach((image) => revealObserver.observe(image));
     else invitationImages.forEach((image) => image.classList.add('is-visible'));
   };
@@ -311,6 +359,7 @@
 
   openButton.addEventListener('click', () => {
     if (!root.classList.contains('is-locked')) return;
+    invitationHasOpened = true;
 
     // Start playback synchronously within the first user gesture for browser autoplay policies.
     if (!musicHasStarted) playMusic();
@@ -322,6 +371,10 @@
     body.classList.add('is-opening');
     invitationContent.inert = false;
     invitationContent.removeAttribute('aria-hidden');
+    if (firstSectionImage) {
+      firstSectionImage.loading = 'eager';
+      if ('fetchPriority' in firstSectionImage) firstSectionImage.fetchPriority = 'high';
+    }
     nextSection.focus({ preventScroll: true });
 
     observeInvitationMedia();

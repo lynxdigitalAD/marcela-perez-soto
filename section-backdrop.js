@@ -15,6 +15,15 @@
   let requestId = 0;
   let framePending = false;
 
+  const discardPendingSource = () => {
+    if (!pendingSource) return;
+    requestId += 1;
+    pendingSource = '';
+    const pendingLayer = layers[activeLayer === 0 ? 1 : 0];
+    pendingLayer.onload = null;
+    pendingLayer.onerror = null;
+  };
+
   const imageForSection = (section) => section.matches('.cover')
     ? section.querySelector('.cover__image')
     : section.querySelector(':scope > picture > img.invitation-image')
@@ -41,7 +50,12 @@
   };
 
   const showSource = (source) => {
-    if (!wideScreen.matches || !source || source === activeSource || source === pendingSource) return;
+    if (!wideScreen.matches || !source) return;
+    if (source === activeSource) {
+      discardPendingSource();
+      return;
+    }
+    if (source === pendingSource) return;
 
     const nextLayerIndex = activeLayer === 0 ? 1 : 0;
     const nextLayer = layers[nextLayerIndex];
@@ -85,8 +99,18 @@
     window.requestAnimationFrame(update);
   };
 
-  window.addEventListener('scroll', scheduleUpdate, { passive: true });
-  window.addEventListener('resize', scheduleUpdate, { passive: true });
-  wideScreen.addEventListener('change', scheduleUpdate);
-  scheduleUpdate();
+  const syncBackdropTracking = () => {
+    if (wideScreen.matches) {
+      window.addEventListener('scroll', scheduleUpdate, { passive: true });
+      window.addEventListener('resize', scheduleUpdate, { passive: true });
+      scheduleUpdate();
+      return;
+    }
+
+    window.removeEventListener('scroll', scheduleUpdate);
+    window.removeEventListener('resize', scheduleUpdate);
+  };
+
+  wideScreen.addEventListener('change', syncBackdropTracking);
+  syncBackdropTracking();
 })();
