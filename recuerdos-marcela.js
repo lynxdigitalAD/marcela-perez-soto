@@ -46,7 +46,7 @@
     bindLightbox();
     if (CONFIG) {
       $('#fileFormats').replaceChildren(
-        element('span', 'moments-formats__group', 'Fotos (JPG/JPEG, PNG, WebP, HEIC y HEIF): máximo ' + formatBytes(CONFIG.maxPhotoInputSize) + ' por archivo; se guardan optimizadas en WebP (máximo ' + formatBytes(CONFIG.maxPhotoProcessedSize) + ').'),
+        element('span', 'moments-formats__group', 'Fotos (JPG/JPEG, PNG, WebP, HEIC y HEIF): máximo ' + formatBytes(CONFIG.maxPhotoInputSize) + ' por archivo; se guardan optimizadas en WebP, JPG o PNG según el navegador (máximo ' + formatBytes(CONFIG.maxPhotoProcessedSize) + ').'),
         element('span', 'moments-formats__group', 'Videos (MP4, MOV y WebM): máximo ' + formatBytes(CONFIG.maxVideoSize) + ' por archivo.')
       );
     }
@@ -345,19 +345,20 @@
       const derivative = await createPhotoDerivative(
         item.file, CONFIG.optimizedMaxDimension, CONFIG.webpQuality, CONFIG.maxPhotoProcessedSize
       );
-      record.original_path = paths.photos + '/' + item.id + '.webp';
+      const extension = imageExtension(derivative.blob.type);
+      record.original_path = paths.photos + '/' + item.id + '.' + extension;
       record.mime_type = derivative.blob.type;
       record.file_size = derivative.blob.size;
       record.width = derivative.width;
       record.height = derivative.height;
-      artifacts.push({ path: record.original_path, body: derivative.blob, label: 'Guardando la foto optimizada…' });
+      artifacts.push({ path: record.original_path, body: derivative.blob, mime: derivative.blob.type, label: 'Guardando la foto optimizada…' });
     } else {
       record.original_path = paths.originalsVideos + '/' + item.id + '.' + getExtension(item.file.name);
       artifacts.push({ path: record.original_path, body: item.file, mime: item.mime, label: 'Guardando el video…' });
       const poster = await createVideoPoster(item.file);
       checkCancelled(item);
       if (poster) {
-        const path = paths.thumbnailsVideos + '/' + item.id + '.webp';
+        const path = paths.thumbnailsVideos + '/' + item.id + '.' + imageExtension(poster.blob.type);
         artifacts.push({ path, body: poster.blob, label: 'Guardando la portada del video…' });
         record.thumbnail_path = path;
         record.width = poster.width;
@@ -531,8 +532,26 @@
 
   function canvasToBlob(canvas, quality) {
     return new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('No se pudo preparar la imagen.')), 'image/webp', quality);
+      const formats = ['image/webp', 'image/jpeg', 'image/png'];
+      const encode = (index) => {
+        const requestedType = formats[index];
+        canvas.toBlob((blob) => {
+          const actualType = blob?.type?.toLowerCase();
+          if (blob && actualType === requestedType) return resolve(blob);
+          if (index < formats.length - 1) return encode(index + 1);
+          if (blob && actualType === 'image/png') return resolve(blob);
+          reject(new Error('No se pudo preparar la imagen.'));
+        }, requestedType, quality);
+      };
+      encode(0);
     });
+  }
+
+  function imageExtension(mime) {
+    const extensions = { 'image/webp': 'webp', 'image/jpeg': 'jpg', 'image/png': 'png' };
+    const extension = extensions[String(mime || '').toLowerCase()];
+    if (!extension) throw new Error('El navegador generó un formato de imagen no compatible.');
+    return extension;
   }
 
   function uploadToStorage(item, artifact, onProgress) {

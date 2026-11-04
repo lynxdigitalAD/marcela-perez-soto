@@ -1,0 +1,15 @@
+{
+  "name": "marcela-recuerdos-r2",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "check": "node --check src/worker.js",
+    "test": "node --test test/worker.test.js"
+  },
+  "devDependencies": {
+    "miniflare": "5.20261101.0-beta",
+    "wrangler": "4.156.1"
+  }
+}

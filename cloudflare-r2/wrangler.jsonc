@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "marcela-recuerdos-api",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-03",
+  "account_id": "4deaa3ee12ae08cbff26104b46c009af",
+  "workers_dev": true,
+  "preview_urls": false,
+  "triggers": { "crons": ["0 * * * *"] },
+  "dev": {
+    "ip": "127.0.0.1",
+    "port": 8787
+  },
+  "vars": {
+    "ALLOWED_ORIGINS": "http://127.0.0.1:8765,http://localhost:8765,http://127.0.0.1:8787,http://localhost:8787,http://192.168.101.4:8766,https://lynxdigitalad.github.io"
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "ALBUM_QUOTA", "class_name": "MarcelaAlbumQuota" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["MarcelaAlbumQuota"] }
+  ],
+  "r2_buckets": [
+    { "binding": "MARCELA_BUCKET", "bucket_name": "lynx-invitaciones-fotos" }
+  ]
+}
