@@ -4,6 +4,7 @@
   const cover = document.getElementById('portada');
   const coverImage = cover.querySelector('.cover__image');
   const openButton = document.getElementById('openInvitation');
+  const openButtonImage = openButton.querySelector('img');
   const invitationContent = document.getElementById('contenido-invitacion');
   const nextSection = document.getElementById('presentacion');
   const audio = document.getElementById('invitationMusic');
@@ -16,6 +17,10 @@
   const isPageReload = navigationType === 'reload';
   const isBackForwardNavigation = navigationType === 'back_forward';
   const motionSections = [cover, ...invitationContent.querySelectorAll('.invitation-section')];
+  const openingCriticalImages = Array.from(invitationContent.querySelectorAll('.invitation-section'))
+    .slice(0, 2)
+    .flatMap((section) => Array.from(section.querySelectorAll('img[loading="lazy"]'))
+      .filter((image) => !image.closest('.section-divider')));
   const motionObserver = 'IntersectionObserver' in window
     ? new IntersectionObserver((entries) => {
       for (const entry of entries) {
@@ -49,6 +54,18 @@
     coverImage.addEventListener('load', revealCoverImage, { once: true });
   }
 
+  const showOpenButtonFallback = () => openButton.classList.add('cover__open--fallback');
+  const showOpenButtonImage = () => {
+    if (openButtonImage.naturalWidth > 0) openButton.classList.remove('cover__open--fallback');
+  };
+  if (openButtonImage.complete) {
+    if (openButtonImage.naturalWidth > 0) showOpenButtonImage();
+    else showOpenButtonFallback();
+  } else {
+    openButtonImage.addEventListener('load', showOpenButtonImage, { once: true });
+    openButtonImage.addEventListener('error', showOpenButtonFallback, { once: true });
+  }
+
   let invitationHasOpened = false;
   const firstSectionImage = nextSection.querySelector('img.invitation-image');
   const prefetchFirstSection = () => {
@@ -77,19 +94,32 @@
   };
 
   const playMusic = () => {
-    const playback = audio.play();
-    if (playback && typeof playback.then === 'function') {
-      playback.then(() => { musicHasStarted = true; }).catch((error) => {
-        console.warn('No se pudo iniciar el audio:', error);
-      });
-    } else {
-      musicHasStarted = true;
+    try {
+      const playback = audio.play();
+      if (playback && typeof playback.then === 'function') {
+        playback.then(() => {
+          if (!audio.paused) musicHasStarted = true;
+          setMusicPlaying(!audio.paused);
+        }).catch(() => {
+          setMusicPlaying(false);
+        });
+      } else {
+        musicHasStarted = !audio.paused;
+        setMusicPlaying(!audio.paused);
+      }
+    } catch {
+      setMusicPlaying(false);
     }
   };
 
-  audio.addEventListener('playing', () => setMusicPlaying(true));
+  audio.addEventListener('playing', () => {
+    musicHasStarted = true;
+    setMusicPlaying(true);
+  });
   audio.addEventListener('pause', () => setMusicPlaying(false));
+  audio.addEventListener('error', () => setMusicPlaying(false));
   musicControl.addEventListener('click', () => {
+    if (root.classList.contains('is-locked')) return;
     if (audio.paused) playMusic();
     else audio.pause();
   });
@@ -106,7 +136,7 @@
         }
         observer.unobserve(image);
       }
-    }, { rootMargin: isSmallScreen ? '1400px 0px' : '1800px 0px', threshold: 0 })
+    }, { rootMargin: isSmallScreen ? '2200px 0px' : '2500px 0px', threshold: 0 })
     : null;
 
   const priorityObserver = 'IntersectionObserver' in window
@@ -118,7 +148,7 @@
         if ('fetchPriority' in image) image.fetchPriority = 'high';
         observer.unobserve(image);
       }
-    }, { rootMargin: '350px 0px', threshold: 0 })
+    }, { rootMargin: '900px 0px', threshold: 0 })
     : null;
 
   const revealObserver = 'IntersectionObserver' in window
@@ -128,7 +158,7 @@
         entry.target.classList.add('is-visible');
         observer.unobserve(entry.target);
       }
-    }, { rootMargin: '900px 0px', threshold: 0 })
+    }, { rootMargin: '1800px 0px', threshold: 0 })
     : null;
 
   const observeInvitationMedia = () => {
@@ -269,7 +299,7 @@
 
     root.style.overflowY = 'auto';
     root.style.height = 'auto';
-    root.style.touchAction = 'pan-y';
+    root.style.removeProperty('touch-action');
     body.style.overflowY = 'auto';
     body.style.position = '';
     body.style.top = '';
@@ -278,7 +308,7 @@
     body.style.width = '';
     body.style.height = 'auto';
     body.style.inset = 'auto';
-    body.style.touchAction = 'pan-y';
+    body.style.removeProperty('touch-action');
     body.style.webkitOverflowScrolling = 'touch';
 
     document.removeEventListener('wheel', preventScroll);
@@ -358,7 +388,7 @@
   }, true);
 
   openButton.addEventListener('click', () => {
-    if (!root.classList.contains('is-locked')) return;
+    if (!root.classList.contains('is-locked') || invitationHasOpened) return;
     invitationHasOpened = true;
 
     // Start playback synchronously within the first user gesture for browser autoplay policies.
@@ -371,16 +401,16 @@
     body.classList.add('is-opening');
     invitationContent.inert = false;
     invitationContent.removeAttribute('aria-hidden');
-    if (firstSectionImage) {
-      firstSectionImage.loading = 'eager';
-      if ('fetchPriority' in firstSectionImage) firstSectionImage.fetchPriority = 'high';
-    }
+    openingCriticalImages.forEach((image) => {
+      image.loading = 'eager';
+      if ('fetchPriority' in image) image.fetchPriority = 'high';
+    });
     nextSection.focus({ preventScroll: true });
 
     observeInvitationMedia();
 
     scrollToPresentation();
-  }, { once: true });
+  });
 
   // Returning from the album should land on its invitation section, unlocked.
   if (!isPageReload && window.location.hash === '#comparte-tus-momentos') {

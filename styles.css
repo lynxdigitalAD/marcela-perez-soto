@@ -21,7 +21,6 @@ body {
   margin: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  touch-action: pan-y;
 }
 
 body {
@@ -94,7 +93,6 @@ body.is-open {
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior-y: auto;
-  touch-action: pan-y;
 }
 
 body.is-opening,
@@ -130,6 +128,7 @@ main.invitation-shell {
   min-height: 100vh;
   min-height: 100svh;
   height: 100vh;
+  height: 100svh;
   height: 100dvh;
   padding: max(2.125rem, env(safe-area-inset-top)) 1.125rem max(1.875rem, env(safe-area-inset-bottom));
   text-align: center;
@@ -246,7 +245,8 @@ h1 span { font-weight: 400; font-style: italic; }
 .cover__open {
   position: absolute;
   right: 0;
-  bottom: max(6.5%, calc(env(safe-area-inset-bottom) + 1.25rem));
+  bottom: 1.25rem;
+  bottom: max(6.5%, calc(env(safe-area-inset-bottom, 0px) + 1.25rem));
   left: 0;
   width: min(70%, 24.375rem);
   margin-inline: auto;
@@ -256,13 +256,32 @@ h1 span { font-weight: 400; font-style: italic; }
   outline-offset: 0.5rem;
   background: transparent;
   cursor: pointer;
+  pointer-events: auto;
   -webkit-tap-highlight-color: transparent;
   animation: button-breathe 2.8s 1.5s ease-in-out infinite;
 }
 
 .cover__open:focus-visible { outline: 0.125rem solid #ffe3ee; }
 .cover__open:disabled { cursor: default; }
-.cover__open img { display: block; width: 100%; height: auto; }
+.cover__open img { display: block; width: 100%; height: auto; pointer-events: none; }
+.cover__open-fallback-label { display: none; }
+.cover__open--fallback {
+  display: grid;
+  aspect-ratio: 2076 / 757;
+  place-items: center;
+  padding: .55rem 1rem;
+  border: 0.0625rem solid rgba(255, 222, 163, .92);
+  border-radius: 62.4375rem;
+  background: linear-gradient(145deg, #c22d64, #721d49 62%, #4d2035);
+  box-shadow: 0 0.25rem 0.75rem rgba(34, 11, 16, .42), inset 0 0.0625rem rgba(255, 248, 224, .28);
+  color: #fff0cc;
+  font-family: 'Rye', 'Bree Serif', Georgia, serif;
+  font-size: clamp(.84rem, 4vw, 1.25rem);
+  line-height: 1.1;
+  text-shadow: 0 0.0625rem 0.1875rem rgba(35, 12, 12, .85);
+}
+.cover__open--fallback img { display: none; }
+.cover__open--fallback .cover__open-fallback-label { display: block; pointer-events: none; }
 
 #contenido-invitacion {
   display: block;
@@ -335,9 +354,9 @@ html.is-open .cover > .section-divider {
   max-width: 100%;
   height: auto;
   align-self: flex-start;
-  opacity: 0;
-  transform: translateY(0.875rem) scale(.992);
-  transition: opacity .72s ease-out, transform .72s cubic-bezier(.2, .75, .25, 1);
+  opacity: 1;
+  transform: none;
+  transition: none;
 }
 
 .invitation-artwork { display: block; width: 100%; }
@@ -632,6 +651,7 @@ html.is-open .cover > .section-divider {
   background: linear-gradient(135deg, rgba(48, 16, 30, .98), rgba(118, 29, 62, .98) 52%, rgba(48, 16, 30, .98));
   box-shadow: 0 0.1875rem 0.625rem rgba(25, 8, 14, .66), inset 0 0 0 0.0625rem rgba(255, 244, 211, .2), inset 0 0 0 0.1875rem rgba(224, 174, 92, .16);
   text-align: center;
+  pointer-events: none;
 }
 .location__name,
 .location__time { margin: 0; }
@@ -673,6 +693,7 @@ html.is-open .cover > .section-divider {
   bottom: 17%;
   left: 9%;
   overflow: hidden;
+  touch-action: auto;
 }
 
 .location__map {
@@ -686,6 +707,8 @@ html.is-open .cover > .section-divider {
   border-radius: 0;
   outline: none;
   background: #eadfcf;
+  pointer-events: auto;
+  touch-action: auto;
 }
 
 .location__map:focus-visible { outline: 0.125rem solid #ffe2a8; outline-offset: 0.1875rem; }
@@ -711,6 +734,8 @@ html.is-open .cover > .section-divider {
   width: 100%;
   height: 100%;
   border: 0;
+  pointer-events: auto;
+  touch-action: auto;
 }
 
 .location__actions {
@@ -781,7 +806,7 @@ html.is-open #contenido-invitacion {
   .cover__eyebrow { font-size: clamp(.58rem, 2vh, .72rem); }
   h1 { font-size: clamp(2rem, 5.2vh, 2.6rem); line-height: .88; }
   .cover__ornament { margin-block: 0.25rem 0.125rem; }
-  .cover__open { width: min(34vw, 15.3125rem); bottom: max(32%, calc(env(safe-area-inset-bottom) + 7rem)); }
+  .cover__open { width: min(34vw, 15.3125rem); bottom: 7rem; bottom: max(32%, calc(env(safe-area-inset-bottom, 0px) + 7rem)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -8,13 +8,14 @@
     <title>Marcela Pérez Soto · 98 años</title>
     <link rel="preload" as="image" href="assets/portada-marcela-blur.webp" type="image/webp" fetchpriority="high">
     <link rel="preload" as="image" href="assets/portada-marcela-fast.webp" type="image/webp" fetchpriority="high">
+    <link rel="preload" as="image" imagesrcset="assets/abrir-invitacion-600w.png 600w, assets/abrir-invitacion-900w.png 900w, assets/abrir-invitacion-1000w.png 1000w, assets/abrir-invitacion-1200w.png 1200w, assets/abrir-invitacion.png 2076w" imagesizes="(orientation: landscape) and (max-height: 600px) 34vw, (max-height: 650px) and (max-width: 699px) 60vw, (min-width: 900px) 293px, (min-width: 700px) 390px, 70vw" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600&family=Rye&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20261104-map-touch-gestures">
+    <link rel="stylesheet" href="styles.css?v=20261104-local-integral-review">
     <link rel="stylesheet" href="recuerdos-marcela.css">
     <script src="separadores.js?v=20261104-image-load" defer></script>
-    <script src="apertura.js?v=20261104-scroll-load-optimization" defer></script>
+    <script src="apertura.js?v=20261104-local-integral-review" defer></script>
     <script src="cuenta-regresiva.js?v=20261104-mobile-resume" defer></script>
     <script src="section-backdrop.js?v=20261104-scroll-load-optimization" defer></script>
   </head>
@@ -43,8 +44,9 @@
           <h1 id="cover-title">Marcela<br><span>Pérez Soto</span></h1>
         </div>
 
-        <button class="cover__open" id="openInvitation" type="button" aria-label="Abrir la invitación">
-          <img src="assets/abrir-invitacion.png" srcset="assets/abrir-invitacion-600w.png 600w, assets/abrir-invitacion-900w.png 900w, assets/abrir-invitacion.png 2076w" sizes="(min-width: 900px) 293px, (min-width: 700px) 390px, 70vw" width="2076" height="757" alt="" draggable="false">
+        <button class="cover__open cover__open--fallback" id="openInvitation" type="button" aria-label="Abrir la invitación">
+          <img src="assets/abrir-invitacion.png" srcset="assets/abrir-invitacion-600w.png 600w, assets/abrir-invitacion-900w.png 900w, assets/abrir-invitacion-1000w.png 1000w, assets/abrir-invitacion-1200w.png 1200w, assets/abrir-invitacion.png 2076w" sizes="(orientation: landscape) and (max-height: 600px) 34vw, (max-height: 650px) and (max-width: 699px) 60vw, (min-width: 900px) 293px, (min-width: 700px) 390px, 70vw" width="2076" height="757" alt="" draggable="false" loading="eager" decoding="async" fetchpriority="high">
+          <span class="cover__open-fallback-label" aria-hidden="true">Abrir invitación</span>
         </button>
       </section>
 
@@ -309,7 +311,9 @@
         </section>
       </div>
     </main>
-    <audio id="invitationMusic" src="assets/el-muchacho-alegre.mp3" preload="none" loop></audio>
+    <audio id="invitationMusic" preload="none" loop>
+      <source src="assets/el-muchacho-alegre.mp3" type="audio/mpeg">
+    </audio>
     <button
       class="music-control"
       id="musicControl"
