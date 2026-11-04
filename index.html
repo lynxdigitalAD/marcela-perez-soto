@@ -9,10 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600&family=Rye&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20261104-desktop-local-size">
+    <link rel="stylesheet" href="styles.css?v=20261104-image-load">
     <link rel="stylesheet" href="recuerdos-marcela.css">
-    <script src="separadores.js?v=20261104-desktop-local-size" defer></script>
-    <script src="apertura.js?v=20261104-scroll-interruptible" defer></script>
+    <script src="separadores.js?v=20261104-image-load" defer></script>
+    <script src="apertura.js?v=20261104-image-load" defer></script>
     <script src="cuenta-regresiva.js?v=20261104-perf-1" defer></script>
     <script src="section-backdrop.js?v=20261104-picture-sources" defer></script>
   </head>
@@ -49,7 +49,11 @@
     <div id="contenido-invitacion" aria-hidden="true" inert>
         <section class="invitation-section" id="presentacion" aria-label="Bienvenida" tabindex="-1">
           <picture class="invitation-artwork">
-            <source srcset="assets/bienvenida-marcela.webp" type="image/webp">
+            <source
+              srcset="assets/bienvenida-marcela-fast-480w.webp 480w, assets/bienvenida-marcela-fast-768w.webp 768w, assets/bienvenida-marcela-fast.webp 941w"
+              sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
+              type="image/webp"
+            >
             <img
               class="invitation-image"
               src="assets/bienvenida-marcela.png"
@@ -70,17 +74,24 @@
           </div>
         </section>
         <section class="invitation-section countdown-section" aria-label="Cuenta regresiva: Cada vez falta menos. Faltan... Cada día nos acerca a un momento muy especial.">
-          <img
-            class="invitation-image countdown__background"
-            src="assets/cuenta-regresiva-marcela.png"
-            srcset="assets/cuenta-regresiva-marcela-800w.png 800w, assets/cuenta-regresiva-marcela.png 1086w"
-            sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
-            width="1086"
-            height="1448"
-            alt=""
-            loading="lazy"
-            decoding="async"
-          >
+          <picture class="invitation-image countdown__background">
+            <source
+              srcset="assets/cuenta-regresiva-marcela-800w.webp 800w, assets/cuenta-regresiva-marcela.webp 1086w"
+              sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
+              type="image/webp"
+            >
+            <img
+              class="countdown__background-image"
+              src="assets/cuenta-regresiva-marcela.png"
+              srcset="assets/cuenta-regresiva-marcela-800w.png 800w, assets/cuenta-regresiva-marcela.png 1086w"
+              sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
+              width="1086"
+              height="1448"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            >
+          </picture>
           <div class="lamp-layer" aria-hidden="true">
             <span class="lamp-glow lamp-glow--countdown-left"></span>
             <span class="lamp-glow lamp-glow--countdown-upper-right"></span>
@@ -89,19 +100,31 @@
           <div class="countdown__placement">
             <div class="countdown__grid" id="countdownTimer" role="timer" aria-label="Cuenta regresiva al 5 de diciembre de 2026 a las 3:00 p. m., hora de Ciudad de México" aria-live="off">
               <div class="countdown__unit" role="group" aria-label="Días">
-                <img class="countdown__frames" src="assets/contador-dias-marcela.png" srcset="assets/contador-dias-marcela-480w.png 480w, assets/contador-dias-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="assets/contador-dias-marcela-480w.webp 480w, assets/contador-dias-marcela.webp 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" type="image/webp">
+                  <img class="countdown__frames" src="assets/contador-dias-marcela.png" srcset="assets/contador-dias-marcela-480w.png 480w, assets/contador-dias-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                </picture>
                 <span class="countdown__value" id="countdownDays" aria-label="Días restantes">--</span>
               </div>
               <div class="countdown__unit" role="group" aria-label="Horas">
-                <img class="countdown__frames" src="assets/contador-horas-marcela.png" srcset="assets/contador-horas-marcela-480w.png 480w, assets/contador-horas-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="assets/contador-horas-marcela-480w.webp 480w, assets/contador-horas-marcela.webp 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" type="image/webp">
+                  <img class="countdown__frames" src="assets/contador-horas-marcela.png" srcset="assets/contador-horas-marcela-480w.png 480w, assets/contador-horas-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                </picture>
                 <span class="countdown__value" id="countdownHours" aria-label="Horas restantes">--</span>
               </div>
               <div class="countdown__unit" role="group" aria-label="Minutos">
-                <img class="countdown__frames" src="assets/contador-minutos-marcela.png" srcset="assets/contador-minutos-marcela-480w.png 480w, assets/contador-minutos-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="assets/contador-minutos-marcela-480w.webp 480w, assets/contador-minutos-marcela.webp 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" type="image/webp">
+                  <img class="countdown__frames" src="assets/contador-minutos-marcela.png" srcset="assets/contador-minutos-marcela-480w.png 480w, assets/contador-minutos-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                </picture>
                 <span class="countdown__value" id="countdownMinutes" aria-label="Minutos restantes">--</span>
               </div>
               <div class="countdown__unit" role="group" aria-label="Segundos">
-                <img class="countdown__frames" src="assets/contador-segundos-marcela.png" srcset="assets/contador-segundos-marcela-480w.png 480w, assets/contador-segundos-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="assets/contador-segundos-marcela-480w.webp 480w, assets/contador-segundos-marcela.webp 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" type="image/webp">
+                  <img class="countdown__frames" src="assets/contador-segundos-marcela.png" srcset="assets/contador-segundos-marcela-480w.png 480w, assets/contador-segundos-marcela.png 1254w" sizes="(min-width: 900px) 183px, (min-width: 700px) 250px, 32vw" width="1254" height="1254" alt="" draggable="false" loading="lazy" decoding="async">
+                </picture>
                 <span class="countdown__value" id="countdownSeconds" aria-label="Segundos restantes">--</span>
               </div>
             </div>
@@ -109,7 +132,11 @@
         </section>
         <section class="invitation-section location-section" id="ubicacion" aria-labelledby="locationTitle">
           <picture class="invitation-artwork">
-            <source srcset="assets/ubicacion-marcela.webp" type="image/webp">
+            <source
+              srcset="assets/ubicacion-marcela-fast-480w.webp 480w, assets/ubicacion-marcela-fast-768w.webp 768w, assets/ubicacion-marcela-fast.webp 941w"
+              sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
+              type="image/webp"
+            >
             <img
               class="invitation-image location__background"
               src="assets/ubicacion-marcela.png"
@@ -127,18 +154,21 @@
           </div>
           <div class="location__content">
             <header class="location__heading" data-location-reveal>
-              <img
-                class="location__heading-art"
-                id="locationTitle"
-                src="assets/ubicacion-encabezado-marcela.png"
-                srcset="assets/ubicacion-encabezado-marcela-600w.png 600w, assets/ubicacion-encabezado-marcela-900w.png 900w, assets/ubicacion-encabezado-marcela.png 1448w"
-                sizes="(min-width: 900px) 398px, (min-width: 700px) 530px, 70vw"
-                width="1448"
-                height="1086"
-                alt="Ubicación. Te esperamos para celebrar juntos este momento tan especial"
-                loading="lazy"
-                decoding="async"
-              >
+              <picture class="location__heading-picture">
+                <source srcset="assets/ubicacion-encabezado-marcela-600w.webp 600w, assets/ubicacion-encabezado-marcela-900w.webp 900w, assets/ubicacion-encabezado-marcela.webp 1448w" sizes="(min-width: 900px) 398px, (min-width: 700px) 530px, 70vw" type="image/webp">
+                <img
+                  class="location__heading-art"
+                  id="locationTitle"
+                  src="assets/ubicacion-encabezado-marcela.png"
+                  srcset="assets/ubicacion-encabezado-marcela-600w.png 600w, assets/ubicacion-encabezado-marcela-900w.png 900w, assets/ubicacion-encabezado-marcela.png 1448w"
+                  sizes="(min-width: 900px) 398px, (min-width: 700px) 530px, 70vw"
+                  width="1448"
+                  height="1086"
+                  alt="Ubicación. Te esperamos para celebrar juntos este momento tan especial"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </picture>
             </header>
 
             <div class="location__tabs" role="tablist" aria-label="Tipo de evento" data-location-reveal>
@@ -160,30 +190,39 @@
                   </div>
                 </div>
               </div>
-              <img
-                class="location__panel-art"
-                src="assets/ubicacion-marco-mapa-marcela.png"
-                srcset="assets/ubicacion-marco-mapa-marcela-800w.png 800w, assets/ubicacion-marco-mapa-marcela-1200w.png 1200w, assets/ubicacion-marco-mapa-marcela.png 1448w"
-                sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 96vw"
-                width="1448"
-                height="1086"
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                decoding="async"
-              >
+              <picture class="location__panel-art">
+                <source srcset="assets/ubicacion-marco-mapa-marcela-800w.webp 800w, assets/ubicacion-marco-mapa-marcela-1200w.webp 1200w, assets/ubicacion-marco-mapa-marcela.webp 1448w" sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 96vw" type="image/webp">
+                <img
+                  src="assets/ubicacion-marco-mapa-marcela.png"
+                  srcset="assets/ubicacion-marco-mapa-marcela-800w.png 800w, assets/ubicacion-marco-mapa-marcela-1200w.png 1200w, assets/ubicacion-marco-mapa-marcela.png 1448w"
+                  sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 96vw"
+                  width="1448"
+                  height="1086"
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </picture>
             </div>
 
             <div class="location__actions" data-location-reveal>
               <button class="location__button" id="directionsButton" type="button" aria-label="Abrir en Maps" disabled>
-                <img src="assets/ubicacion-boton-maps-marcela.png" srcset="assets/ubicacion-boton-maps-marcela-480w.png 480w, assets/ubicacion-boton-maps-marcela-700w.png 700w, assets/ubicacion-boton-maps-marcela.png 2172w" sizes="(min-width: 900px) 316px, (min-width: 700px) 421px, 54vw" width="2172" height="724" alt="" draggable="false" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="assets/ubicacion-boton-maps-marcela-480w.webp 480w, assets/ubicacion-boton-maps-marcela-700w.webp 700w, assets/ubicacion-boton-maps-marcela.webp 2172w" sizes="(min-width: 900px) 316px, (min-width: 700px) 421px, 54vw" type="image/webp">
+                  <img src="assets/ubicacion-boton-maps-marcela.png" srcset="assets/ubicacion-boton-maps-marcela-480w.png 480w, assets/ubicacion-boton-maps-marcela-700w.png 700w, assets/ubicacion-boton-maps-marcela.png 2172w" sizes="(min-width: 900px) 316px, (min-width: 700px) 421px, 54vw" width="2172" height="724" alt="" draggable="false" loading="lazy" decoding="async">
+                </picture>
               </button>
             </div>
           </div>
         </section>
         <section class="invitation-section" id="codigo-vestimenta" aria-label="Código de vestimenta">
           <picture class="invitation-artwork">
-            <source srcset="assets/codigo-vestimenta-marcela.webp" type="image/webp">
+            <source
+              srcset="assets/codigo-vestimenta-marcela-fast-480w.webp 480w, assets/codigo-vestimenta-marcela-fast-768w.webp 768w, assets/codigo-vestimenta-marcela-fast.webp 1024w"
+              sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
+              type="image/webp"
+            >
             <img
               class="invitation-image"
               src="assets/codigo-vestimenta-marcela.png"
@@ -201,17 +240,20 @@
           </div>
         </section>
         <section class="invitation-section rsvp-section" id="confirmacion" aria-label="Confirmación de asistencia">
-          <img
-            class="invitation-image rsvp__background"
-            src="assets/confirmacion-base-marcela.png"
-            srcset="assets/confirmacion-base-marcela-800w.png 800w, assets/confirmacion-base-marcela-1200w.png 1200w, assets/confirmacion-base-marcela.png 1448w"
-            sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
-            width="1448"
-            height="956"
-            alt="¿Nos acompañas? Tu presencia hace este día aún más especial."
-            loading="lazy"
-            decoding="async"
-          >
+          <picture class="invitation-image rsvp__background">
+            <source srcset="assets/confirmacion-base-marcela-800w.webp 800w, assets/confirmacion-base-marcela-1200w.webp 1200w, assets/confirmacion-base-marcela.webp 1448w" sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw" type="image/webp">
+            <img
+              class="rsvp__background-image"
+              src="assets/confirmacion-base-marcela.png"
+              srcset="assets/confirmacion-base-marcela-800w.png 800w, assets/confirmacion-base-marcela-1200w.png 1200w, assets/confirmacion-base-marcela.png 1448w"
+              sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
+              width="1448"
+              height="956"
+              alt="¿Nos acompañas? Tu presencia hace este día aún más especial."
+              loading="lazy"
+              decoding="async"
+            >
+          </picture>
           <div class="lamp-layer" aria-hidden="true">
             <span class="lamp-glow lamp-glow--rsvp-left"></span>
             <span class="lamp-glow lamp-glow--rsvp-right"></span>
@@ -223,25 +265,32 @@
             rel="noopener noreferrer"
             aria-label="Confirmar asistencia por WhatsApp"
           >
-            <img
-              class="invitation-image rsvp__button-image"
-              src="assets/confirmacion-boton-marcela.png"
-              srcset="assets/confirmacion-boton-marcela-400w.png 400w, assets/confirmacion-boton-marcela-600w.png 600w, assets/confirmacion-boton-marcela.png 2172w"
-              sizes="(min-width: 900px) 257px, (min-width: 700px) 343px, 44vw"
-              width="2172"
-              height="724"
-              alt=""
-              draggable="false"
-              loading="lazy"
-              decoding="async"
-            >
+            <picture class="rsvp__button-picture">
+              <source srcset="assets/confirmacion-boton-marcela-400w.webp 400w, assets/confirmacion-boton-marcela-600w.webp 600w, assets/confirmacion-boton-marcela.webp 2172w" sizes="(min-width: 900px) 257px, (min-width: 700px) 343px, 44vw" type="image/webp">
+              <img
+                class="invitation-image rsvp__button-image"
+                src="assets/confirmacion-boton-marcela.png"
+                srcset="assets/confirmacion-boton-marcela-400w.png 400w, assets/confirmacion-boton-marcela-600w.png 600w, assets/confirmacion-boton-marcela.png 2172w"
+                sizes="(min-width: 900px) 257px, (min-width: 700px) 343px, 44vw"
+                width="2172"
+                height="724"
+                alt=""
+                draggable="false"
+                loading="lazy"
+                decoding="async"
+              >
+            </picture>
           </a>
         </section>
 
         <section class="invitation-section memories-section" id="comparte-tus-momentos" aria-labelledby="memoriesTitle" tabindex="-1">
           <div class="memories__artboard">
             <picture class="invitation-artwork">
-              <source srcset="assets/comparte-momentos-marcela.webp" type="image/webp">
+              <source
+                srcset="assets/comparte-momentos-marcela-fast-480w.webp 480w, assets/comparte-momentos-marcela-fast-768w.webp 768w, assets/comparte-momentos-marcela-fast.webp 1024w"
+                sizes="(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw"
+                type="image/webp"
+              >
               <img
                 class="invitation-image memories__background"
                 src="assets/comparte-momentos-marcela.png"

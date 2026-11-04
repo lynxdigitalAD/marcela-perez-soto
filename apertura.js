@@ -8,6 +8,7 @@
   const audio = document.getElementById('invitationMusic');
   const musicControl = document.getElementById('musicControl');
   const invitationImages = invitationContent.querySelectorAll('.invitation-image');
+  const lazyInvitationImages = document.querySelectorAll('.section-divider img[loading="lazy"], #contenido-invitacion img[loading="lazy"]');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const isPageReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
   let musicHasStarted = false;
@@ -35,6 +36,18 @@
     if (audio.paused) playMusic();
     else audio.pause();
   });
+  const preloadObserver = 'IntersectionObserver' in window
+    ? new IntersectionObserver((entries, observer) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const image = entry.target;
+        image.loading = 'eager';
+        if ('fetchPriority' in image) image.fetchPriority = 'low';
+        observer.unobserve(image);
+      }
+    }, { rootMargin: '1800px 0px', threshold: 0 })
+    : null;
+
   const revealObserver = 'IntersectionObserver' in window
     ? new IntersectionObserver((entries, observer) => {
       for (const entry of entries) {
@@ -42,8 +55,14 @@
         entry.target.classList.add('is-visible');
         observer.unobserve(entry.target);
       }
-    }, { threshold: 0.12 })
+    }, { rootMargin: '900px 0px', threshold: 0 })
     : null;
+
+  const observeInvitationMedia = () => {
+    if (preloadObserver) lazyInvitationImages.forEach((image) => preloadObserver.observe(image));
+    if (revealObserver) invitationImages.forEach((image) => revealObserver.observe(image));
+    else invitationImages.forEach((image) => image.classList.add('is-visible'));
+  };
 
   const isLocked = () => root.classList.contains('is-locked');
 
@@ -210,8 +229,7 @@
     invitationContent.removeAttribute('aria-hidden');
     nextSection.focus({ preventScroll: true });
 
-    if (revealObserver) invitationImages.forEach((image) => revealObserver.observe(image));
-    else invitationImages.forEach((image) => image.classList.add('is-visible'));
+    observeInvitationMedia();
 
     scrollToPresentation();
   }, { once: true });
@@ -223,6 +241,7 @@
     invitationContent.inert = false;
     invitationContent.removeAttribute('aria-hidden');
     invitationImages.forEach((image) => image.classList.add('is-visible'));
+    observeInvitationMedia();
     finishOpening();
     requestAnimationFrame(() => {
       const memories = document.getElementById('comparte-tus-momentos');

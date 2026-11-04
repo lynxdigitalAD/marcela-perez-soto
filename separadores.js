@@ -3,6 +3,12 @@
     connectedCallback() {
       if (this.childElementCount) return;
 
+      const picture = document.createElement('picture');
+      const webp = document.createElement('source');
+      webp.type = 'image/webp';
+      webp.srcset = 'assets/separador-vaquero-marcela-800w.webp 800w, assets/separador-vaquero-marcela-1200w.webp 1200w, assets/separador-vaquero-marcela.webp 2172w';
+      webp.sizes = '(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw';
+
       const image = document.createElement('img');
       image.srcset = 'assets/separador-vaquero-marcela-800w.png 800w, assets/separador-vaquero-marcela-1200w.png 1200w, assets/separador-vaquero-marcela.png 2172w';
       image.sizes = '(min-width: 900px) 585px, (min-width: 700px) 780px, 100vw';
@@ -14,7 +20,8 @@
       image.height = 724;
       image.loading = 'lazy';
       image.decoding = 'async';
-      this.append(image);
+      picture.append(webp, image);
+      this.append(picture);
     }
   }
 
