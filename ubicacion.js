@@ -1,12 +1,19 @@
 (() => {
-  // Coordenadas a las que resuelve el enlace compartido. El botón conserva el enlace original.
-  const eventLocation = {
-    eventLocationName: '',
-    eventAddress: '',
-    googleMapsUrl: 'https://maps.app.goo.gl/Pz1jXbxvV7Yn5ojv5',
-    googleMapsEmbedUrl: 'https://www.google.com/maps?q=19.4326077,-99.133208&z=17&output=embed',
-    eventCoordinates: '19.4326077,-99.133208',
-    eventTime: '3:30 P. M.',
+  const eventLocations = {
+    fiesta: {
+      name: 'Salón MC',
+      address: '3a Adolfo López Mateos 4, Medias Tierras, 43698 Tulancingo, Hgo.',
+      mapsUrl: 'https://maps.app.goo.gl/q2vhdzTr7PithSEJ8?g_st=iw',
+      mapQuery: 'Salón MC, 3a Adolfo López Mateos 4, Medias Tierras, 43698 Tulancingo, Hgo.',
+      dateTime: '5 de diciembre · 3:00 p. m.',
+    },
+    misa: {
+      name: 'Parroquia de la Santísima Trinidad',
+      address: 'C. Petr Tchaikovsky, Jardines del Sur 4ta Secc, 43660 Tulancingo, Hgo.',
+      mapsUrl: 'https://maps.app.goo.gl/fyvmi3VPmndbYeD26?g_st=iw',
+      mapQuery: 'Parroquia de la Santísima Trinidad, C. Petr Tchaikovsky, Jardines del Sur 4ta Secc, 43660 Tulancingo, Hgo.',
+      dateTime: '6 de diciembre · 1:00 p. m.',
+    },
   };
 
   const time = document.getElementById('eventTime');
@@ -19,6 +26,50 @@
 
   if (!time || !name || !address || !map || !directionsButton || !locationPanel || tabs.length === 0) return;
 
+  const safeMapsUrl = (value) => {
+    if (!value) return '';
+    try {
+      const url = new URL(value);
+      return url.protocol === 'https:' ? url.href : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const showLocation = (location) => {
+    if (!location) return;
+
+    name.textContent = location.name;
+    time.textContent = location.dateTime;
+    address.textContent = location.address;
+    address.hidden = !location.address;
+
+    directionsButton.disabled = !safeMapsUrl(location.mapsUrl);
+
+    const embedUrl = safeMapsUrl(
+      `https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&z=17&output=embed`,
+    );
+    if (!embedUrl) {
+      map.replaceChildren();
+      return;
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.src = embedUrl;
+    iframe.title = `Mapa de ${location.name}`;
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.allowFullscreen = true;
+    map.replaceChildren(iframe);
+  };
+
+  directionsButton.addEventListener('click', () => {
+    const activeTab = tabs.find((tab) => tab.getAttribute('aria-selected') === 'true');
+    const location = eventLocations[activeTab?.dataset.eventLocation];
+    const mapsUrl = safeMapsUrl(location?.mapsUrl);
+    if (mapsUrl) window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+  });
+
   const selectTab = (selectedIndex, moveFocus = false) => {
     tabs.forEach((tab, index) => {
       const selected = index === selectedIndex;
@@ -30,6 +81,7 @@
     const activeTab = tabs[selectedIndex];
     locationPanel.setAttribute('aria-labelledby', activeTab.id);
     map.setAttribute('aria-label', `Mapa de ${activeTab.textContent.trim().toLocaleLowerCase('es-MX')}`);
+    showLocation(eventLocations[activeTab.dataset.eventLocation]);
     if (moveFocus) activeTab.focus();
   };
 
@@ -48,45 +100,6 @@
     });
   });
   selectTab(Math.max(0, tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true')));
-
-  time.textContent = eventLocation.eventTime || '3:30 P. M.';
-  name.textContent = eventLocation.eventLocationName.trim() || 'Lugar por confirmar';
-  address.textContent = eventLocation.eventAddress.trim();
-  address.hidden = !eventLocation.eventAddress.trim();
-
-  const safeMapsUrl = (value) => {
-    if (!value) return '';
-    try {
-      const url = new URL(value);
-      return url.protocol === 'https:' ? url.href : '';
-    } catch {
-      return '';
-    }
-  };
-
-  const coordinates = eventLocation.eventCoordinates.trim();
-  const placeQuery = coordinates || eventLocation.eventAddress.trim();
-  const directionsUrl = safeMapsUrl(eventLocation.googleMapsUrl)
-    || safeMapsUrl(eventLocation.googleMapsEmbedUrl)
-    || (placeQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeQuery)}` : '');
-
-  if (directionsUrl) {
-    directionsButton.disabled = false;
-    directionsButton.addEventListener('click', () => window.open(directionsUrl, '_blank', 'noopener,noreferrer'));
-  }
-
-  const embedUrl = safeMapsUrl(eventLocation.googleMapsEmbedUrl);
-  if (embedUrl) {
-    const iframe = document.createElement('iframe');
-    iframe.src = embedUrl;
-    iframe.title = eventLocation.eventLocationName
-      ? `Mapa de ${eventLocation.eventLocationName}`
-      : 'Mapa de la ubicación del evento';
-    iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
-    iframe.allowFullscreen = true;
-    map.replaceChildren(iframe);
-  }
 
   const revealItems = [...document.querySelectorAll('#ubicacion [data-location-reveal]')];
   revealItems.forEach((item, index) => {

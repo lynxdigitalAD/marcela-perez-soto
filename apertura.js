@@ -9,6 +9,7 @@
   const musicControl = document.getElementById('musicControl');
   const invitationImages = invitationContent.querySelectorAll('.invitation-image');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const isPageReload = performance.getEntriesByType('navigation')[0]?.type === 'reload';
   let musicHasStarted = false;
 
   const setMusicPlaying = (isPlaying) => {
@@ -45,6 +46,18 @@
     : null;
 
   const isLocked = () => root.classList.contains('is-locked');
+
+  if (isPageReload) {
+    // A main-page reload always starts at the locked cover, including after returning from the album.
+    history.scrollRestoration = 'manual';
+    if (window.location.hash) {
+      history.replaceState(history.state, '', window.location.pathname + window.location.search);
+    }
+    window.scrollTo(0, 0);
+    window.addEventListener('pageshow', () => {
+      if (isLocked()) window.scrollTo(0, 0);
+    }, { once: true });
+  }
 
   const easeOpeningScroll = (progress) => {
     // Cubic-bezier(0.22, 1, 0.36, 1), solved in x-space for stable timing.
@@ -168,4 +181,19 @@
 
     scrollToPresentation();
   }, { once: true });
+
+  // Returning from the album should land on its invitation section, unlocked.
+  if (!isPageReload && window.location.hash === '#comparte-tus-momentos') {
+    openButton.disabled = true;
+    unlockPageScroll();
+    invitationContent.inert = false;
+    invitationContent.removeAttribute('aria-hidden');
+    invitationImages.forEach((image) => image.classList.add('is-visible'));
+    finishOpening();
+    requestAnimationFrame(() => {
+      const memories = document.getElementById('comparte-tus-momentos');
+      memories.scrollIntoView({ block: 'start' });
+      memories.focus({ preventScroll: true });
+    });
+  }
 })();

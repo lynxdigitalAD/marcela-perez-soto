@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#411323">
+    <meta name="description" content="Comparte fotos y videos de la celebración de los 98 años de Marcela Pérez Soto.">
+    <title>Comparte tus momentos · Marcela</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://marcela-recuerdos-api.lynxdigitalad.workers.dev" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="recuerdos-marcela.css?v=20261104-perf-assets-1">
+    <script src="recuerdos-config.js?v=20261104-infinite-10" defer></script>
+    <script src="recuerdos-marcela.js?v=20261104-album-review-2" defer></script>
+  </head>
+  <body class="memories-page">
+    <a class="moments-skip" href="#galeria">Saltar a los recuerdos</a>
+    <div class="moments-backdrop" aria-hidden="true"></div>
+    <main class="moments-shell">
+      <nav class="moments-topbar" aria-label="Navegación del álbum">
+        <a class="moments-back" href="index.html#comparte-tus-momentos">
+          <img class="moments-icon" src="assets/iconos-marcela-marfil/arrow-left.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="arrow-left">
+          Volver a la invitación
+        </a>
+        <span class="moments-signature">Marcela</span>
+      </nav>
+
+      <section class="moments-hero" aria-labelledby="momentsTitle">
+        <div class="moments-hero__copy">
+          <h1 id="momentsTitle">Comparte tus <em>momentos</em></h1>
+          <p class="moments-intro">Cada mirada, cada abrazo, cada sonrisa.<br>Ayúdanos a guardar los recuerdos de este día tan especial.</p>
+          <div class="moments-actions" role="group" aria-label="Compartir fotos y videos">
+            <button class="moments-button" id="photoButton" type="button">
+              <img class="moments-icon" src="assets/iconos-marcela-marfil/photos.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="photos">
+              Subir fotos
+            </button>
+            <button class="moments-button" id="videoButton" type="button">
+              <img class="moments-icon" src="assets/iconos-marcela-marfil/video.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="video">
+              Subir videos
+            </button>
+            <button class="moments-button" id="takePhotoButton" type="button">
+              <img class="moments-icon" src="assets/iconos-marcela-marfil/camera.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="camera">
+              Tomar una foto
+            </button>
+          </div>
+          <p class="moments-formats" id="fileFormats">
+            <span class="moments-formats__group">Fotos (JPG/JPEG, PNG, WebP, HEIC y HEIF): máximo 50 MB por archivo; se guardan optimizadas en WebP (máximo 50 MB).</span>
+            <span class="moments-formats__group">Videos (MP4, MOV y WebM): máximo 250 MB por archivo.</span>
+          </p>
+        </div>
+        <input class="moments-file-input" id="photoInput" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.heic,.heif" multiple aria-label="Seleccionar fotografías" tabindex="-1">
+        <input class="moments-file-input" id="videoInput" type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm" multiple aria-label="Seleccionar videos" tabindex="-1">
+        <input class="moments-file-input" id="cameraPhotoInput" type="file" accept="image/*" capture="environment" aria-label="Tomar una foto" tabindex="-1">
+      </section>
+
+      <section class="moments-panel moments-queue" id="subidas" aria-labelledby="queueTitle">
+        <header class="moments-section-heading">
+          <div>
+            <p class="moments-eyebrow">Tus aportaciones</p>
+            <h2 id="queueTitle">Cola de recuerdos</h2>
+          </div>
+          <span class="moments-count" id="queueCount">0 archivos</span>
+        </header>
+        <div class="moments-dropzone" id="uploadDropZone">
+          <div class="moments-queue-empty" id="queueEmpty">
+            <img class="moments-icon" src="assets/iconos-marcela-marfil/upload.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="upload">
+            <p>Un recuerdo comienza contigo.</p>
+            <span>Selecciona tus fotos o videos arriba. También puedes arrastrarlos aquí.</span>
+          </div>
+          <ul class="moments-upload-list" id="uploadList" aria-label="Archivos seleccionados"></ul>
+        </div>
+        <p class="moments-feedback" id="selectionStatus" role="status" aria-live="polite"></p>
+        <div class="moments-queue-footer" id="queueFooter" hidden>
+          <p id="queueSummary" role="status" aria-live="polite">Revisa tus archivos y compártelos cuando quieras.</p>
+          <button class="moments-button moments-button--gold" id="uploadAllButton" type="button">
+            <img class="moments-icon" src="assets/iconos-marcela-marfil/upload.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="upload">
+            <span>Subir recuerdos</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="moments-gallery-section" id="galeria" aria-labelledby="galleryTitle" tabindex="-1">
+        <header class="moments-section-heading">
+          <div>
+            <p class="moments-eyebrow">El álbum de Marcela</p>
+            <h2 id="galleryTitle" tabindex="-1">Recuerdos compartidos</h2>
+          </div>
+          <button class="moments-button moments-button--compact" id="refreshGallery" type="button">
+            <img class="moments-icon" src="assets/iconos-marcela-marfil/refresh.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="refresh">
+            <span>Actualizar</span>
+          </button>
+        </header>
+        <p class="moments-feedback" id="galleryStatus" role="status" aria-live="polite">Buscando recuerdos…</p>
+        <div class="moments-gallery-empty moments-panel" id="galleryEmpty" hidden>
+          <img class="moments-icon" src="assets/iconos-marcela-marfil/album.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="album">
+          <h3>El primer recuerdo puede ser el tuyo.</h3>
+          <p>Las fotos y los videos que compartamos aparecerán aquí.</p>
+        </div>
+        <div class="moments-gallery" id="memoriesGallery" aria-label="Fotos y videos compartidos"></div>
+        <div class="moments-gallery-sentinel" id="gallerySentinel" aria-hidden="true"></div>
+      </section>
+
+      <footer class="moments-footer">
+        <img class="moments-footer__emblem" src="assets/iconos-marcela-marfil/footer-herradura.webp" width="44" height="44" alt="" aria-hidden="true" decoding="async" loading="lazy">
+        <p>Gracias por ser parte de esta historia.</p>
+        <a class="moments-back" href="index.html#comparte-tus-momentos">Volver a la invitación</a>
+      </footer>
+    </main>
+
+    <dialog class="moments-lightbox" id="memoryLightbox" aria-labelledby="lightboxTitle">
+      <header class="moments-lightbox__header">
+        <p id="lightboxTitle">Un recuerdo de Marcela</p>
+        <button class="moments-icon-button" id="closeLightbox" type="button" aria-label="Cerrar recuerdo">
+          <img class="moments-icon" src="assets/iconos-marcela-marfil/close.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="close">
+        </button>
+      </header>
+      <div class="moments-lightbox__stage">
+        <button class="moments-icon-button" id="previousMemory" type="button" aria-label="Recuerdo anterior">
+          <img class="moments-icon" src="assets/iconos-marcela-marfil/arrow-left.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="arrow-left">
+        </button>
+        <figure>
+          <div class="moments-lightbox__media" id="lightboxMedia"></div>
+          <figcaption id="lightboxCaption"></figcaption>
+        </figure>
+        <button class="moments-icon-button" id="nextMemory" type="button" aria-label="Recuerdo siguiente">
+          <img class="moments-icon" src="assets/iconos-marcela-marfil/arrow-right.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="arrow-right">
+        </button>
+      </div>
+      <div class="moments-lightbox__actions">
+        <button class="moments-button" id="shareMemory" type="button">
+          <img class="moments-icon" src="assets/iconos-marcela-marfil/share.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="share">Compartir
+        </button>
+        <button class="moments-button moments-button--gold" id="downloadMemory" type="button">
+          <img class="moments-icon" src="assets/iconos-marcela-marfil/download.webp" width="48" height="48" alt="" aria-hidden="true" decoding="async" data-icon="download">Descargar
+        </button>
+      </div>
+      <p class="moments-feedback" id="lightboxStatus" role="status" aria-live="polite"></p>
+      <input class="moments-share-link" id="shareLink" type="text" readonly aria-label="Enlace del recuerdo para copiar" hidden>
+    </dialog>
+  </body>
+</html>

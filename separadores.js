@@ -4,6 +4,8 @@
       if (this.childElementCount) return;
 
       const image = document.createElement('img');
+      image.srcset = 'assets/separador-vaquero-marcela-800w.png 800w, assets/separador-vaquero-marcela-1200w.png 1200w, assets/separador-vaquero-marcela.png 2172w';
+      image.sizes = '(min-width: 780px) 780px, 100vw';
       image.src = 'assets/separador-vaquero-marcela.png';
       image.alt = '';
       image.setAttribute('aria-hidden', 'true');

@@ -17,7 +17,9 @@
 
   const imageForSection = (section) => section.matches('.cover')
     ? section.querySelector('.cover__image')
-    : section.querySelector(':scope > img.invitation-image');
+    : section.querySelector(':scope > picture > img.invitation-image')
+      || section.querySelector(':scope > img.invitation-image')
+      || section.querySelector('.memories__background');
 
   const sectionAtViewportCenter = () => {
     const midpoint = window.innerHeight / 2;

@@ -8,16 +8,17 @@
 
   if (Object.values(values).some((element) => !element)) return;
 
-  // 5 de diciembre de 2026, 15:30 en America/Mexico_City (UTC−06:00).
+  // 5 de diciembre de 2026, 15:00 en America/Mexico_City (UTC−06:00).
   // Epoch UTC evita que la zona horaria configurada en el dispositivo altere el objetivo.
-  const targetTime = Date.UTC(2026, 11, 5, 21, 30, 0);
+  const targetTime = Date.UTC(2026, 11, 5, 21, 0, 0);
 
   const updateValue = (element, value) => {
     if (element.textContent === value) return;
-    element.textContent = value;
     element.classList.remove('is-changing');
-    void element.offsetWidth;
-    element.classList.add('is-changing');
+    element.textContent = value;
+    requestAnimationFrame(() => {
+      if (element.isConnected && element.textContent === value) element.classList.add('is-changing');
+    });
   };
 
   let timer = null;
