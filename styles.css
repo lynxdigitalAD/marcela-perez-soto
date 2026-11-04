@@ -673,7 +673,6 @@ html.is-open .cover > .section-divider {
   bottom: 17%;
   left: 9%;
   overflow: hidden;
-  touch-action: none;
 }
 
 .location__map {
