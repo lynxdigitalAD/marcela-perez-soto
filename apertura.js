@@ -90,20 +90,54 @@
     }
 
     const startedAt = performance.now();
+    let animationFrame = 0;
+    let isAnimating = true;
+
+    const removeScrollIntentListeners = () => {
+      window.removeEventListener('wheel', interruptForUserScroll);
+      window.removeEventListener('touchstart', interruptForUserScroll);
+      window.removeEventListener('pointerdown', interruptForUserScroll);
+      document.removeEventListener('keydown', interruptForScrollKey, true);
+    };
+
+    const completeAnimation = () => {
+      if (!isAnimating) return;
+      isAnimating = false;
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      removeScrollIntentListeners();
+      finishOpening();
+    };
+
+    const interruptForUserScroll = () => completeAnimation();
+    const interruptForScrollKey = (event) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(event.key) || event.code === 'Space') {
+        completeAnimation();
+      }
+    };
+
+    // A guest's scroll gesture takes priority over the brief automatic opening movement.
+    window.addEventListener('wheel', interruptForUserScroll, { passive: true });
+    window.addEventListener('touchstart', interruptForUserScroll, { passive: true });
+    window.addEventListener('pointerdown', interruptForUserScroll, { passive: true });
+    document.addEventListener('keydown', interruptForScrollKey, true);
+
     const step = (now) => {
+      animationFrame = 0;
+      if (!isAnimating) return;
+
       const progress = Math.min(1, (now - startedAt) / duration);
       const eased = easeOpeningScroll(progress);
       window.scrollTo(0, startY + (targetY - startY) * eased);
 
       if (progress < 1) {
-        requestAnimationFrame(step);
+        animationFrame = requestAnimationFrame(step);
       } else {
         window.scrollTo(0, targetY);
-        finishOpening();
+        completeAnimation();
       }
     };
 
-    requestAnimationFrame(step);
+    animationFrame = requestAnimationFrame(step);
   };
 
   const finishOpening = () => {
