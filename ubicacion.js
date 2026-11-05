@@ -156,6 +156,7 @@
       touchZoom: true,
       scrollWheelZoom: true,
       doubleClickZoom: true,
+      keyboard: false,
       zoomControl: false,
       attributionControl: false,
       tap: true,
@@ -178,7 +179,8 @@
       icon: markerIcon,
       title: location.name,
       alt: location.name,
-      keyboard: true,
+      keyboard: false,
+      autoPanOnFocus: false,
     }).bindPopup(popupLabel).addTo(leafletMap);
     updateMarker(location);
 
