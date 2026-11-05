@@ -26,6 +26,9 @@
 
   if (!time || !name || !address || !map || !directionsButton || !locationPanel || tabs.length === 0) return;
 
+  const mapFrames = new Map();
+  let activeLocationKey = '';
+
   const safeMapsUrl = (value) => {
     if (!value) return '';
     try {
@@ -36,31 +39,50 @@
     }
   };
 
-  const showLocation = (location) => {
+  const createMapFrame = (locationKey) => {
+    if (mapFrames.has(locationKey)) return mapFrames.get(locationKey);
+
+    const location = eventLocations[locationKey];
+    const embedUrl = safeMapsUrl(
+      `https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&z=17&output=embed`,
+    );
+    if (!embedUrl) return null;
+
+    const iframe = document.createElement('iframe');
+    iframe.title = `Mapa de ${location.name}`;
+    iframe.loading = 'eager';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.allowFullscreen = true;
+    iframe.addEventListener('load', () => iframe.classList.add('is-loaded'), { once: true });
+    iframe.dataset.mapSrc = embedUrl;
+    mapFrames.set(locationKey, iframe);
+    return iframe;
+  };
+
+  const activateMap = (locationKey) => {
+    const activeFrame = createMapFrame(locationKey);
+    if (!activeFrame) return;
+
+    mapFrames.forEach((iframe, key) => {
+      iframe.classList.toggle('is-active', key === locationKey);
+    });
+
+    if (!activeFrame.isConnected) map.append(activeFrame);
+    if (!activeFrame.hasAttribute('src')) activeFrame.src = activeFrame.dataset.mapSrc;
+  };
+
+  const showLocation = (locationKey, loadMap = true) => {
+    const location = eventLocations[locationKey];
     if (!location) return;
 
+    activeLocationKey = locationKey;
     name.textContent = location.name;
     time.textContent = location.dateTime;
     address.textContent = location.address;
     address.hidden = !location.address;
-
     directionsButton.disabled = !safeMapsUrl(location.mapsUrl);
 
-    const embedUrl = safeMapsUrl(
-      `https://www.google.com/maps?q=${encodeURIComponent(location.mapQuery)}&z=17&output=embed`,
-    );
-    if (!embedUrl) {
-      map.replaceChildren();
-      return;
-    }
-
-    const iframe = document.createElement('iframe');
-    iframe.src = embedUrl;
-    iframe.title = `Mapa de ${location.name}`;
-    iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
-    iframe.allowFullscreen = true;
-    map.replaceChildren(iframe);
+    if (loadMap) activateMap(locationKey);
   };
 
   directionsButton.addEventListener('click', () => {
@@ -70,7 +92,7 @@
     if (mapsUrl) window.open(mapsUrl, '_blank', 'noopener,noreferrer');
   });
 
-  const selectTab = (selectedIndex, moveFocus = false) => {
+  const selectTab = (selectedIndex, moveFocus = false, loadMap = true) => {
     tabs.forEach((tab, index) => {
       const selected = index === selectedIndex;
       tab.classList.toggle('is-active', selected);
@@ -81,7 +103,7 @@
     const activeTab = tabs[selectedIndex];
     locationPanel.setAttribute('aria-labelledby', activeTab.id);
     map.setAttribute('aria-label', `Mapa de ${activeTab.textContent.trim().toLocaleLowerCase('es-MX')}`);
-    showLocation(eventLocations[activeTab.dataset.eventLocation]);
+    showLocation(activeTab.dataset.eventLocation, loadMap);
     if (moveFocus) activeTab.focus();
   };
 
@@ -99,7 +121,13 @@
       selectTab(nextIndex, true);
     });
   });
-  selectTab(Math.max(0, tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true')));
+
+  const initialIndex = Math.max(0, tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true'));
+  selectTab(initialIndex, false, false);
+
+  const prepareSelectedMap = () => activateMap(activeLocationKey);
+  document.addEventListener('marcela:invitation-opened', prepareSelectedMap, { once: true });
+  if (!document.documentElement.classList.contains('is-locked')) prepareSelectedMap();
 
   const revealItems = [...document.querySelectorAll('#ubicacion [data-location-reveal]')];
   revealItems.forEach((item, index) => {

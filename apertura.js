@@ -4,7 +4,6 @@
   const cover = document.getElementById('portada');
   const coverImage = cover.querySelector('.cover__image');
   const openButton = document.getElementById('openInvitation');
-  const openButtonImage = openButton.querySelector('img');
   const invitationContent = document.getElementById('contenido-invitacion');
   const nextSection = document.getElementById('presentacion');
   const audio = document.getElementById('invitationMusic');
@@ -30,40 +29,15 @@
     : null;
   if (motionObserver) motionSections.forEach((section) => motionObserver.observe(section));
   else motionSections.forEach((section) => section.classList.add('is-motion-active'));
-  const pageStateStorageKey = 'marcela-invitation-page-state-v1';
-  const readPageState = () => {
-    try {
-      const state = JSON.parse(sessionStorage.getItem(pageStateStorageKey));
-      return state?.open === true && Number.isFinite(state.scrollY) ? state : null;
-    } catch {
-      return null;
-    }
-  };
-  const savedHistoryState = isBackForwardNavigation ? readPageState() : null;
-  if (!isBackForwardNavigation) {
-    try { sessionStorage.removeItem(pageStateStorageKey); } catch {}
-  }
   let musicHasStarted = false;
   let cancelOpeningScroll = () => {};
-  let recoveryFrame = 0;
+  let openingScrollFinished = false;
 
   const revealCoverImage = () => cover.classList.remove('cover--loading');
   if (coverImage.complete && coverImage.naturalWidth > 0) revealCoverImage();
   else {
     cover.classList.add('cover--loading');
     coverImage.addEventListener('load', revealCoverImage, { once: true });
-  }
-
-  const showOpenButtonFallback = () => openButton.classList.add('cover__open--fallback');
-  const showOpenButtonImage = () => {
-    if (openButtonImage.naturalWidth > 0) openButton.classList.remove('cover__open--fallback');
-  };
-  if (openButtonImage.complete) {
-    if (openButtonImage.naturalWidth > 0) showOpenButtonImage();
-    else showOpenButtonFallback();
-  } else {
-    openButtonImage.addEventListener('load', showOpenButtonImage, { once: true });
-    openButtonImage.addEventListener('error', showOpenButtonFallback, { once: true });
   }
 
   let invitationHasOpened = false;
@@ -81,7 +55,7 @@
     }
   };
   const restoresOpenInvitation = window.location.hash === '#comparte-tus-momentos'
-    || (isBackForwardNavigation && savedHistoryState?.open);
+    || isBackForwardNavigation;
   if (!restoresOpenInvitation) {
     if (coverImage.complete && coverImage.naturalWidth > 0) scheduleFirstSectionPrefetch();
     else coverImage.addEventListener('load', scheduleFirstSectionPrefetch, { once: true });
@@ -170,13 +144,6 @@
 
   const isLocked = () => root.classList.contains('is-locked');
 
-  const savePageState = () => {
-    if (isLocked()) return;
-    try {
-      sessionStorage.setItem(pageStateStorageKey, JSON.stringify({ open: true, scrollY: window.scrollY }));
-    } catch {}
-  };
-
   if (isPageReload) {
     // A main-page reload always starts at the locked cover, including after returning from the album.
     history.scrollRestoration = 'manual';
@@ -184,9 +151,6 @@
       history.replaceState(history.state, '', window.location.pathname + window.location.search);
     }
     window.scrollTo(0, 0);
-    window.addEventListener('pageshow', () => {
-      if (isLocked()) window.scrollTo(0, 0);
-    }, { once: true });
   }
 
   const easeOpeningScroll = (progress) => {
@@ -209,6 +173,8 @@
   };
 
   const scrollToPresentation = () => {
+    if (openingScrollFinished) return;
+
     const startY = window.scrollY;
     const targetY = Math.max(0, Math.round(startY + nextSection.getBoundingClientRect().top));
     if (isSmallScreen) {
@@ -281,6 +247,8 @@
   };
 
   const finishOpening = () => {
+    openingScrollFinished = true;
+    history.scrollRestoration = 'auto';
     root.classList.remove('is-opening');
     body.classList.remove('is-opening');
     root.classList.add('is-open');
@@ -292,82 +260,37 @@
   };
 
   const unlockPageScroll = () => {
-    const restoreY = window.scrollY;
-
     root.classList.remove('is-locked');
     body.classList.remove('is-locked');
-
-    root.style.overflowY = 'auto';
-    root.style.height = 'auto';
-    root.style.removeProperty('touch-action');
-    body.style.overflowY = 'auto';
-    body.style.position = '';
-    body.style.top = '';
-    body.style.left = '';
-    body.style.right = '';
-    body.style.width = '';
-    body.style.height = 'auto';
-    body.style.inset = 'auto';
-    body.style.removeProperty('touch-action');
-    body.style.webkitOverflowScrolling = 'touch';
 
     document.removeEventListener('wheel', preventScroll);
     document.removeEventListener('touchmove', preventScroll);
     document.removeEventListener('dragstart', preventScroll);
-    window.scrollTo(0, restoreY);
+    document.dispatchEvent(new Event('marcela:invitation-opened'));
   };
 
-  const restoreOpenPage = (requestedY = window.scrollY) => {
-    if (isLocked()) return;
+  const restoreOpenPage = () => {
+    invitationHasOpened = true;
     if (root.classList.contains('is-opening')) cancelOpeningScroll();
     openButton.disabled = true;
-    finishOpening();
     unlockPageScroll();
     invitationContent.inert = false;
     invitationContent.removeAttribute('aria-hidden');
     observeInvitationMedia();
-
-    if (recoveryFrame) cancelAnimationFrame(recoveryFrame);
-    recoveryFrame = requestAnimationFrame(() => {
-      recoveryFrame = 0;
-      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      const scrollY = Math.min(Math.max(0, Number.isFinite(requestedY) ? requestedY : window.scrollY), maxScroll);
-      window.scrollTo(0, scrollY);
-
-      // Reveal artwork near the restored viewport immediately; leave distant sections lazy.
-      const preloadDistance = 900;
-      invitationImages.forEach((image) => {
-        const bounds = image.getBoundingClientRect();
-        if (bounds.bottom >= -preloadDistance && bounds.top <= window.innerHeight + preloadDistance) {
-          image.classList.add('is-visible');
-        }
-      });
-    });
-  };
-
-  const resumeVisiblePage = () => {
-    root.classList.remove('is-page-backgrounded');
-    if (isLocked()) return;
-    const savedState = readPageState();
-    restoreOpenPage(savedState?.open ? savedState.scrollY : window.scrollY);
+    finishOpening();
   };
 
   const backgroundPage = () => {
     root.classList.add('is-page-backgrounded');
-    if (!isLocked()) savePageState();
     if (root.classList.contains('is-opening')) cancelOpeningScroll();
   };
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) backgroundPage();
-    else resumeVisiblePage();
+    else root.classList.remove('is-page-backgrounded');
   });
   window.addEventListener('pagehide', backgroundPage);
-  window.addEventListener('pageshow', (event) => {
-    root.classList.remove('is-page-backgrounded');
-    if (isLocked()) return;
-    if (event.persisted || isBackForwardNavigation) resumeVisiblePage();
-  });
+  window.addEventListener('pageshow', () => root.classList.remove('is-page-backgrounded'));
 
   document.addEventListener('wheel', preventScroll, { passive: false });
   document.addEventListener('touchmove', preventScroll, { passive: false });
@@ -405,8 +328,6 @@
       image.loading = 'eager';
       if ('fetchPriority' in image) image.fetchPriority = 'high';
     });
-    nextSection.focus({ preventScroll: true });
-
     observeInvitationMedia();
 
     scrollToPresentation();
@@ -421,12 +342,9 @@
     invitationImages.forEach((image) => image.classList.add('is-visible'));
     observeInvitationMedia();
     finishOpening();
-    requestAnimationFrame(() => {
-      const memories = document.getElementById('comparte-tus-momentos');
-      memories.scrollIntoView({ block: 'start' });
-      memories.focus({ preventScroll: true });
-    });
-  } else if (isBackForwardNavigation && savedHistoryState?.open) {
-    restoreOpenPage(savedHistoryState.scrollY);
+    document.getElementById('comparte-tus-momentos')
+      .scrollIntoView({ block: 'start', behavior: 'auto' });
+  } else if (isBackForwardNavigation) {
+    restoreOpenPage();
   }
 })();
